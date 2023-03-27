@@ -1,0 +1,4 @@
+STREQUE_BASE_URL = 'http://localhost:5555'
+STREQUE_URL = STREQUE_BASE_URL + '/api/v1'
+STREQUE_TOKEN = 'very secret token should be here'
+DISCORD_BOT_TOKEN = 'another very secret token should be here'
