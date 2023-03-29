@@ -16,4 +16,5 @@ async def on_ready():
 
 
 bot.load_extension('quote')
+bot.load_extension('song')
 bot.run(DISCORD_BOT_TOKEN)
