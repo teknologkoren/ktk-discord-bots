@@ -3,7 +3,6 @@ from datetime import datetime
 
 import discord
 from discord import commands, option
-import streque
 
 
 class Song(discord.Cog):
@@ -18,8 +17,6 @@ class Song(discord.Cog):
         return discord.Embed(
             title=f"{song['page']}. {song['name']}",
             description="\n".join(song['alt']) if 'alt' in song else "",
-            # url=f"https://www.streque.se/quotes/#quote-{quote['id']}",
-            # timestamp=datetime.fromtimestamp(quote['timestamp']),
             fields=[
                 discord.EmbedField(name=f"Tonart", value=song['chord'], inline=True),
                 discord.EmbedField(name=f"Starttoner", value=", ".join(song['tones']), inline=True),

@@ -12,6 +12,8 @@ async-timeout==4.0.2
     # via aiohttp
 attrs==22.2.0
     # via aiohttp
+bidict==0.22.1
+    # via python-socketio
 certifi==2022.12.7
     # via requests
 charset-normalizer==3.1.0
@@ -31,6 +33,10 @@ multidict==6.0.4
     #   aiohttp
     #   yarl
 py-cord==2.4.1
+    # via -r requirements.in
+python-engineio==4.4.0
+    # via python-socketio
+python-socketio[async_client]==5.8.0
     # via -r requirements.in
 requests==2.28.2
     # via -r requirements.in
