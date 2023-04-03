@@ -1,7 +1,8 @@
 STREQUE_BASE_URL = 'http://localhost:5555'
 STREQUE_URL = STREQUE_BASE_URL + '/api/v1'
 STREQUE_TOKEN = 'very secret token should be here'
-DISCORD_BOT_TOKEN = 'another very secret token should be here'
+STREQUE_BOT_TOKEN = 'another very secret token should be here'
+CHOIR_BOT_TOKEN = 'yet another very secret token should be here'
 DISCORD_GUILD_ID = 1000000000000000000
 DISCORD_VIP_ROLE_ID = 1000000000000000000
 DISCORD_VIP_CHANNEL_ID = 1000000000000000000
