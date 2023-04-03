@@ -29,8 +29,8 @@ async def on_ready():
 bot.load_extension('quote')
 bot.load_extension('song')
 
-async def main():
-    await sio.connect(STREQUE_BASE_URL, auth={'token': STREQUE_TOKEN})
-    await bot.start(DISCORD_BOT_TOKEN)
-
-asyncio.run(main())
+# Start the Discord bot and SocketIO connection to Streque.
+loop = asyncio.get_event_loop()
+loop.create_task(bot.start(DISCORD_BOT_TOKEN))
+loop.create_task(sio.connect(STREQUE_BASE_URL, auth={'token': STREQUE_TOKEN}))
+loop.run_forever()
