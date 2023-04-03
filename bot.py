@@ -1,17 +1,25 @@
 import asyncio
-import socketio
 import discord
-import pprint
-from config import DISCORD_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL
-
+import logging
+import socketio
 from datetime import datetime
 
 import streque
+from config import DISCORD_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL
 
+# Logging for Discord bot.
+logger = logging.getLogger('discord')
+logger.setLevel(logging.INFO)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
+
+# Initialize Discord bot.
 intents = discord.Intents.default()
 bot = discord.Bot(intents=intents)
+
+# Initialize SocketIO client used to listen to events from Streque.
 sio = socketio.AsyncClient(logger=True, engineio_logger=True)
-pp = pprint.PrettyPrinter(indent=2)
 
 @sio.on('balance_change')
 async def message(data):
