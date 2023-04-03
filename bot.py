@@ -5,7 +5,9 @@ import logging
 import socketio
 from datetime import datetime
 
+import balance_change
 import birthday
+import notifications
 import streque
 from config import CHOIR_BOT_TOKEN, STREQUE_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL
 
@@ -28,12 +30,12 @@ sio = socketio.AsyncClient(logger=True, engineio_logger=True)
 
 @sio.on('balance_change')
 async def message(data):
-    await streque.handle_balance_change(streque_bot, data)
+    await balance_change.handle_balance_change(streque_bot, data)
 
 
 @sio.on('notification')
 async def message(data):
-    await streque.handle_notification(streque_bot, data)
+    await notifications.handle_notification(streque_bot, data)
 
 
 @aiocron.crontab('3 1 * * *')
