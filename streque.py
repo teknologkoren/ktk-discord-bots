@@ -1,37 +1,48 @@
+import aiohttp
 import discord
-import requests
 from config import STREQUE_URL, STREQUE_TOKEN
 from config import DISCORD_GUILD_ID, DISCORD_VIP_ROLE_ID, DISCORD_VIP_CHANNEL_ID
 
 
-def get_request(path):
-    return requests.get(
-        f'{STREQUE_URL}{path}',
-        headers={'Authorization': f'Bearer {STREQUE_TOKEN}'}
-        )
+# Make a GET request, check that it was successful, and return the response content
+# as JSON.
+async def get_request(path):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            f'{STREQUE_URL}{path}',
+            headers={'Authorization': f'Bearer {STREQUE_TOKEN}'}
+        ) as response:
+            response.raise_for_status()
+            return await response.json()
 
 
-def post_request(path):
-    return requests.post(
-        f'{STREQUE_URL}{path}',
-        headers={'Authorization': f'Bearer {STREQUE_TOKEN}'}
-        )
+# Make a POST request, check that it was successful, and ignore any response content.
+async def post_request(path):
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            f'{STREQUE_URL}{path}',
+            headers={'Authorization': f'Bearer {STREQUE_TOKEN}'}
+        ) as response:
+            response.raise_for_status()
+            return
 
 
-def get_random_quote():
-    return get_request('/quotes/random').json()
+async def get_random_quote():
+    return await get_request('/quotes/random')
 
 
-def get_quote(quote_id):
-    return get_request(f'/quotes/{quote_id}').json()
+async def get_quote(quote_id):
+    return await get_request(f'/quotes/{quote_id}')
 
 
-def mark_notification_sent(notification_id):
-    post_request(f'/notifications/{notification_id}/mark_sent').raise_for_status()
+async def mark_notification_sent(notification_id):
+    await post_request(
+        f'/notifications/{notification_id}/mark_sent')
 
 
-def mark_notification_acknowledged(notification_id):
-    post_request(f'/notifications/{notification_id}/mark_acknowledged').raise_for_status()
+async def mark_notification_acknowledged(notification_id):
+    await post_request(
+        f'/notifications/{notification_id}/mark_acknowledged')
 
 
 def kr(ören):
@@ -119,7 +130,7 @@ async def handle_notification(bot, notification):
 
     channel = await get_dm_channel(bot, discord_user_id)
     await channel.send(notification['text'], view=view)
-    mark_notification_sent(notification['notification_id'])
+    await mark_notification_sent(notification['notification_id'])
 
 
 class MarkReadView(discord.ui.View):
@@ -129,6 +140,7 @@ class MarkReadView(discord.ui.View):
 
     @discord.ui.button(label="Markera som läst", style=discord.ButtonStyle.primary, emoji="✅")
     async def button_callback(self, button, interaction):
-        mark_notification_acknowledged(interaction.custom_id[len("notification-"):])
+        await mark_notification_acknowledged(
+            interaction.custom_id[len("notification-"):])
         button.disabled = True
         await interaction.response.edit_message(view=self)

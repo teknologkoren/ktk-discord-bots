@@ -32,7 +32,7 @@ class Quote(discord.Cog):
     )
     async def id(self, ctx, quote_id: int):
         try:
-            result = streque.get_quote(int(quote_id))
+            result = await streque.get_quote(int(quote_id))
             await ctx.respond(embeds=[self.create_embed(result)])
         except:
             await ctx.respond("I couldn't find the quote you were looking for...")
@@ -40,10 +40,11 @@ class Quote(discord.Cog):
     @quote.command(description="Post a random Streque quote.")
     async def random(self, ctx):
         try:
-            result = streque.get_random_quote()
+            result = await streque.get_random_quote()
             await ctx.respond(embeds=[self.create_embed(result)])
         except:
             await ctx.respond("I didn't manage to get a random quote. Please inform the webmaster so they can fix me.")
+
 
     @quote.command(description="Lookup a Streque quote by its permalink, e.g. \"https://www.streque.se/quotes/#quote-1971\".")
     @option(
@@ -56,7 +57,7 @@ class Quote(discord.Cog):
             await ctx.respond("You seem to have provided an invalid quote URL.")
         else:
             try:
-                result = streque.get_quote(int(match.group(1)))
+                result = await streque.get_quote(int(match.group(1)))
                 await ctx.respond(embeds=[self.create_embed(result)])
             except:
                 await ctx.respond("I couldn't find the quote you were looking for...")
