@@ -1,9 +1,11 @@
+import aiocron
 import asyncio
 import discord
 import logging
 import socketio
 from datetime import datetime
 
+import birthday
 import streque
 from config import CHOIR_BOT_TOKEN, STREQUE_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL
 
@@ -32,6 +34,12 @@ async def message(data):
 @sio.on('notification')
 async def message(data):
     await streque.handle_notification(streque_bot, data)
+
+
+@aiocron.crontab('3 1 * * *')
+async def check_birthdays():
+    print(f"{datetime.now()} It is midnight, let's check if it is someone's birthday!")
+    await birthday.congratulate(streque_bot)
 
 
 @streque_bot.event

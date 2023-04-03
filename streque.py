@@ -1,4 +1,5 @@
 import aiohttp
+import datetime
 import discord
 from config import STREQUE_URL, STREQUE_TOKEN
 from config import DISCORD_GUILD_ID, DISCORD_VIP_ROLE_ID, DISCORD_VIP_CHANNEL_ID
@@ -33,6 +34,10 @@ async def get_random_quote():
 
 async def get_quote(quote_id):
     return await get_request(f'/quotes/{quote_id}')
+
+
+async def get_birthday_users(month, day):
+    return await get_request(f'/users/by-birthday/{month}/{day}')
 
 
 async def mark_notification_sent(notification_id):
