@@ -40,7 +40,7 @@ async def message(data):
     await notifications.handle_notification(streque_bot, data)
 
 
-@aiocron.crontab('3 1 * * *')
+@aiocron.crontab('0 0 * * *')
 async def check_birthdays():
     print(f"{datetime.now()} It is midnight, let's check if it is someone's birthday!")
     await birthday.congratulate(streque_bot)
