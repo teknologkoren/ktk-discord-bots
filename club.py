@@ -11,7 +11,7 @@ class Club(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @club_group.command(description="")
+    @club_group.command(description="Command to help admins with creating a new club chat.")
     @option(
         "emoji",
         description="Emoji of the club. Will be used in the channel name and in the info message.",
@@ -29,6 +29,14 @@ class Club(discord.Cog):
         description="Description of the club to be used in the info message and the channel topic.",
     )
     async def add(self, ctx, emoji: str, name: str, slug: str, description: str):
+        # Check that the user has permission to edit roles and channels.
+        if ctx.guild is None:
+            await ctx.respond("Detta kommando kan endast användas från en server-kanal.")
+            return
+        if not ctx.user.guild_permissions.manage_guild:
+            await ctx.respond("Du har ej behörighet att köra detta kommando, vänligen be en admin att hjälpa dig.")
+            return
+
         reason = f"Creating new club chat {name}."
 
         # Create a role needed to access the club chat.
