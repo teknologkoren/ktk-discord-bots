@@ -21,8 +21,10 @@ handler.setFormatter(logging.Formatter(
 logger.addHandler(handler)
 
 # Initialize Discord bots.
-streque_bot = discord.Bot(intents=discord.Intents.default())
-choir_bot = discord.Bot(intents=discord.Intents.default())
+intents = discord.Intents.default()
+intents.message_content = True
+streque_bot = discord.Bot(intents=intents)
+choir_bot = discord.Bot(intents=intents)
 
 # Initialize SocketIO client used to listen to events from Streque.
 sio = socketio.AsyncClient(logger=True, engineio_logger=True)
@@ -56,6 +58,7 @@ async def on_ready():
 
 streque_bot.load_extension('quote')
 choir_bot.load_extension('song')
+choir_bot.load_extension('club')
 
 # Start the Discord bot and SocketIO connection to Streque.
 loop = asyncio.get_event_loop()
