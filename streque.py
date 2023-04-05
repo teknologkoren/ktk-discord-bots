@@ -29,8 +29,16 @@ async def get_random_quote():
     return await get_request('/quotes/random')
 
 
-async def get_quote(quote_id):
+async def get_quote_by_id(quote_id):
     return await get_request(f'/quotes/{quote_id}')
+
+
+async def get_latest_quote():
+    return (await get_request(f'/quotes?order=desc&limit=1'))[0]
+
+
+async def get_all_quotes():
+    return await get_request(f'/quotes')
 
 
 async def get_birthday_users(month, day):

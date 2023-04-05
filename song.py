@@ -103,7 +103,7 @@ class Song(discord.Cog):
         if song.get('url', None):
             view.add_item(discord.ui.Button(
                 emoji="<:pdf:1092947757498650805>",
-                label="Noter",
+                label="Not",
                 url=song['url'],
             ))
 
