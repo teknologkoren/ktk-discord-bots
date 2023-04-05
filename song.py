@@ -1,10 +1,8 @@
 import json
-from datetime import datetime
 
 import discord
 from discord import commands, option
 
-import player
 from config import FLERSTÄMT_PDF_URL, FLERSTÄMT_MIDI_URL
 
 
@@ -107,12 +105,17 @@ class Song(discord.Cog):
                 url=song['url'],
             ))
 
-        # Flerstämt link
+        # Flerstämt links
         if song.get('page', None):
             view.add_item(discord.ui.Button(
                 emoji="<:pdf:1092947757498650805>",
                 label="Flerstämt",
                 url=FLERSTÄMT_PDF_URL,
+            ))
+            view.add_item(discord.ui.Button(
+                emoji="<:drive:1092948377794252941>",
+                label="MIDI-mapp",
+                url=FLERSTÄMT_MIDI_URL,
             ))
 
         return view
