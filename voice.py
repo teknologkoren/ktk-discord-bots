@@ -1,9 +1,9 @@
 import asyncio
-import discord
 import math
 import struct
 from functools import cache
 
+import discord
 
 steps_from_A = {
     'A': 0,
@@ -24,34 +24,65 @@ def note_to_frequency(note: str):
             offset += 1
         elif note[1] == 'b':
             offset -= 1
-    
+
     return 440 * (2 ** (offset/12))
 
 
 async def play_note(interaction, bot, notes):
-    channel = interaction.user.voice.channel
-    if channel is None:
+    if interaction.guild is None:
+        await interaction.response.send_message(
+            content="Jag kan tyvärr inte ta ton från DMs, utan bara från server-kanaler.",
+            ephemeral=True)
         return
-    
+
+    if interaction.user.voice is None:
+        await interaction.response.send_message(
+            content="Gå in i en röstkanal och försök igen, så följer jag efter dig och tar ton där!",
+            ephemeral=True)
+        return
+
+    # If the bot is already in a voice channel, get the client.
     client = discord.utils.get(bot.voice_clients, guild=interaction.guild)
-    if client:
+
+    # Check if the bot is in the same channel as the calling user.
+    channel = interaction.user.voice.channel
+    if client and client.is_connected():
         if client.channel != channel:
             await client.disconnect()
             client = None
-    
+
+    # Connect to the voice channel that the calling user is in.
     if not client:
         client = await channel.connect()
 
+    # Play the note sequence.
     client.play(NotePlayer(notes))
+
+    # Respond to the interaction to let Discord know it was successful.
     await interaction.response.edit_message()
 
+    # Wait for a while, and then disconnect (we don't want the disconnect signal to
+    # sound immediately after the notes have been played)
+    await asyncio.sleep(30)
+    if client.is_connected() and not client.is_playing():
+        await client.disconnect()
 
+
+# Serves raw audio packets in 16-bit 48KHz stereo PCM.
+# Reference: the data sub-chunk spec in https://archive.is/7pUpZ#selection-160.0-160.1
 class NotePlayer(discord.AudioSource):
+    SAMPLE_RATE = 48_000
+
     def __init__(self, notes):
-        self.i = 0
-        self.n = 0
+        # List of notes to play.
         self.notes = notes
-    
+
+        # The index of the currently playing note.
+        self.n = 0
+
+        # How many packets we have already sent for the current note.
+        self.i = 0
+
     def read(self):
         if self.i >= 48_000:
             self.i = 0
@@ -62,20 +93,26 @@ class NotePlayer(discord.AudioSource):
         frame = bytearray()
 
         for _ in range(960):
-            amplitude = 2**14 + round(
-                2**13 *
-                math.sin(
-                    self.i * 2 * math.pi *
-                    note_to_frequency(self.notes[self.n]) / 48_000))
+            # The factor 2**14 was selected so that
+            #   - each sample fits in a signed 16-bit integer (could've been no larger than 2**15-1)
+            #   - lowered a bit to avoid it being maximum volume
+            amplitude = round(
+                2**13 * math.sin(
+                    2 * math.pi * note_to_frequency(self.notes[self.n]) / NotePlayer.SAMPLE_RATE)
+                * self.i)
 
-            b1, b2 = struct.pack('<H', amplitude)
-            frame.append(b1) # Channel 1
-            frame.append(b2)
-            frame.append(b1) # Channel 2
-            frame.append(b2)
+            # Interpret the amplitude as a signed short (int16), pack it in little-endian,
+            # and get the two bytes.
+            b1, b2 = struct.pack('<h', amplitude)
+
+            frame.append(b1)  # Left channel first byte
+            frame.append(b2)  # Left channel second byte
+            frame.append(b1)  # Right channel first byte
+            frame.append(b2)  # Right channel second byte
+
             self.i += 1
-        
+
         return bytes(frame)
-    
+
     def is_opus(self):
         return False
