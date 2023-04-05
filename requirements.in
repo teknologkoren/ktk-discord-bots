@@ -3,3 +3,4 @@ requests
 python-socketio[async_client]
 aiocron
 aiohttp[speedups]
+pynacl

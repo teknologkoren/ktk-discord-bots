@@ -442,7 +442,7 @@
     "chord": "Fm"
 }, {
     "name": "Vad har du i fickan Jan",
-    "alt": ["Tan-tan-tan-tan-tan-tan-tango", "Av alla sällskapsdanser är det tango", "Nu ska ni få höra när Jan"],
+    "alt": ["Tan-tan-tan-tan-tan-tan-tango", "Av alla sällskapsdanser är det tango", "Nu ska ni få höra när Jan", "Jan"],
     "page": "183",
     "tones": ["Ab", "F", "C"],
     "chord": "Ab"
@@ -475,4 +475,19 @@
     "page": "42",
     "tones": ["C"],
     "chord": "C"
+}, {
+    "name": "Leonardo Dreams of His Flying Machine",
+    "page": null,
+    "tones": ["F", "C", "Ab", "F", "C"],
+    "chord": "Fm"
+}, {
+    "name": "Richte mich, Gott",
+    "page": null,
+    "tones": ["A"],
+    "chord": "Am"
+}, {
+    "name": "Loch Lomond",
+    "page": null,
+    "tones": ["Eb"],
+    "chord": "Ab"
 }]
