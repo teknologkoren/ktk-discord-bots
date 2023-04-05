@@ -14,17 +14,58 @@ class Song(discord.Cog):
         with open("songs.json", "r") as f:
             self.songs = json.load(f)
 
+        # Lookup table from any valid search query (name, alternative names,
+        # page number followed by name) to song dict.
         self.lookup = {}
+
+        # Lookup table from page number to song dict.
         self.by_page = {}
+
+        # Lookup table from id to song dict.
+        self.by_id = {}
+
         for song in self.songs:
+            self.by_id[song['id']] = song
+
             if song['page'] is not None:
                 self.lookup[f"{song['page']}. {song['name']}"] = song
                 self.by_page[song['page']] = song
-            self.lookup[song['name']] = song
 
+            self.lookup[song['name']] = song
             if 'alt' in song:
                 for alt in song['alt']:
                     self.lookup[alt] = song
+
+    async def autocomplete_callback(self, ctx: discord.AutocompleteContext):
+        results = [key for key in self.lookup.keys()
+                   if not ctx.value or key.lower().startswith(ctx.value.lower())]
+
+        # If empty query or searching by page number, sort in numeric order.
+        if len(ctx.value) == 0 or ctx.value.isnumeric():
+            return sorted([key for key in results if key[0:1].isnumeric()], key=lambda song: int(song[:song.find('.')]))
+        else:
+            return sorted(results)
+
+    @commands.command(
+        description="Get information about a song. Either from Flerstämt, or from a "
+        "selected subset of certified bangers.")
+    @option(
+        "query",
+        description='Song title, beginning lyrics, or page number in Flerstämt.',
+        autocomplete=autocomplete_callback
+    )
+    async def song(self, ctx, query: str):
+        result = self.lookup.get(query, None)
+        if result is None:
+            result = self.by_page.get(query, None)
+
+        if result is None:
+            await ctx.respond("Jag kunde inte hitta sången du letar efter. :(")
+        else:
+            await ctx.respond(
+                embeds=[self.create_embed(result)],
+                view=self.create_song_view(result)
+            )
 
     def create_embed(self, song):
         if 'page' in song and song['page']:
@@ -35,58 +76,46 @@ class Song(discord.Cog):
             title=title,
             description="\n".join(song['alt']) if 'alt' in song else "",
             fields=[
-                discord.EmbedField(name=f"Startackord / tonart", value=song['chord'], inline=True),
-                discord.EmbedField(name=f"Starttoner", value=", ".join(song['tones']), inline=True),
+                discord.EmbedField(
+                    name=f"Startackord / tonart",
+                    value=song['chord'],
+                    inline=True
+                ),
+                discord.EmbedField(
+                    name=f"Starttoner",
+                    value=", ".join(song['tones']),
+                    inline=True
+                ),
             ],
         )
-    
-    async def autocomplete_page(self, ctx: discord.AutocompleteContext):
-        results = [key for key in self.lookup.keys() 
-                   if not ctx.value or key.lower().startswith(ctx.value.lower())]
 
-        # If searching by page number, sort in numeric order.
-        if len(ctx.value) == 0 or ctx.value.isnumeric():
-            return sorted([key for key in results if key[0:1].isnumeric()], key=lambda song: int(song[:song.find('.')]))
-        else:
-            return sorted(results)
+    def create_song_view(self, song):
+        view = discord.ui.View(timeout=None)
 
+        view.add_item(discord.ui.Button(
+            emoji="<:stamgaffel:1089692591672537179>",
+            label="Ta ton",
+            style=discord.ButtonStyle.primary,
+            custom_id=f"ta-ton-{song['id']}",
+        ))
 
-    @commands.command(description="Get information about a song. Either from Flerstämt, or from a selected subset of certified bangers.")
-    @option(
-        "song",
-        description='Song title, beginning lyrics, or page number in Flerstämt.',
-        autocomplete=autocomplete_page
-    )
-    async def song(self, ctx, song: str):
-        result = self.lookup.get(song, None)
-        if result is None:
-            result = self.by_page.get(song, None)
+        # Sheet music link
+        if song.get('url', None):
+            view.add_item(discord.ui.Button(
+                emoji="<:pdf:1092947757498650805>",
+                label="Noter",
+                url=song['url'],
+            ))
 
-        if result is None:
-            await ctx.respond("Jag kunde inte hitta sången du letar efter. :(")
-        else:
-            if 'page' in result and result['page']:
-                view = SongView(self.bot, "Flerstämt", FLERSTÄMT_PDF_URL, result['tones'])
-            elif 'url' in result:
-                view = SongView(self.bot, "Noter", result['url'], result['tones'])
-            else:
-                view = None
+        # Flerstämt link
+        if song.get('page', None):
+            view.add_item(discord.ui.Button(
+                emoji="<:pdf:1092947757498650805>",
+                label="Flerstämt",
+                url=FLERSTÄMT_PDF_URL,
+            ))
 
-            await ctx.respond(embeds=[self.create_embed(result)], view=view)
-
-
-class SongView(discord.ui.View):
-    def __init__(self, bot, link_title, url, notes, *items, **kwargs):
-        super().__init__(*items, timeout=None, **kwargs)
-        self.bot = bot
-        self.notes = notes
-        self.add_item(discord.ui.Button(label=link_title, url=url, emoji="<:pdf:1092947757498650805>"))
-        if link_title == 'Flerstämt':
-            self.add_item(discord.ui.Button(label="MIDI-mapp", url=FLERSTÄMT_MIDI_URL, emoji="<:drive:1092948377794252941>"))
-
-    @discord.ui.button(label="Ta ton", style=discord.ButtonStyle.primary, emoji="<:stamgaffel:1089692591672537179>")
-    async def button_callback(self, button, interaction):
-        await player.play_note(interaction, self.bot, self.notes)
+        return view
 
 
 def setup(bot):

@@ -1,14 +1,15 @@
+import logging
+from datetime import datetime
+
 import aiocron
 import asyncio
 import discord
-import logging
 import socketio
-from datetime import datetime
 
 import balance_change
 import birthday
 import notifications
-import streque
+import player
 from config import CHOIR_BOT_TOKEN, STREQUE_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL
 
 # Logging for Discord bot.
@@ -20,11 +21,36 @@ handler.setFormatter(logging.Formatter(
     '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
+
+# A custom subclass of `discord.Bot`` is required in order to listen manually
+# to some interactions without catching them all. And this in turn is needed
+# for responding to button clicks that no longer have a corresponding View.
+class CustomBot(discord.Bot):
+    def __init__(self, description=None, *args, **options):
+        super().__init__(description, *args, **options)
+
+    async def on_interaction(self, interaction):
+        custom_id = interaction.custom_id
+        if custom_id:
+
+            if custom_id.startswith('notification-'):
+                await notifications.mark_read_callback(interaction)
+                return
+
+            elif custom_id.startswith('ta-ton-'):
+                song_id = int(custom_id[len('ta-ton-'):])
+                song = self.get_cog('Song').by_id[song_id]
+                await player.play_note(interaction, self, song['tones'])
+                return
+
+        await super().on_interaction(interaction)
+
+
 # Initialize Discord bots.
 intents = discord.Intents.default()
 intents.message_content = True
-streque_bot = discord.Bot(intents=intents)
-choir_bot = discord.Bot(intents=intents)
+streque_bot = CustomBot(intents=intents)
+choir_bot = CustomBot(intents=intents)
 
 # Initialize SocketIO client used to listen to events from Streque.
 sio = socketio.AsyncClient(logger=True, engineio_logger=True)

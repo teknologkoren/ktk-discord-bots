@@ -56,6 +56,10 @@ async def play_note(interaction, bot, notes):
     if not client:
         client = await channel.connect()
 
+        # Wait a short duration to not have the notes start playing directly after
+        # the connect sound.
+        await asyncio.sleep(0.5)
+
     # Play the note sequence.
     client.play(NotePlayer(notes))
 
@@ -98,9 +102,14 @@ class NotePlayer(discord.AudioSource):
             #   - each sample fits in a signed 16-bit integer (could've been no larger than 2**15-1)
             #   - lowered a bit to avoid it being maximum volume
             amplitude = round(
-                2**13 * math.sin(
-                    2 * math.pi * note_to_frequency(self.notes[self.n]) / NotePlayer.SAMPLE_RATE
-                    * self.i))
+                2**13 *
+                math.sin(
+                    2 * math.pi *
+                    note_to_frequency(
+                        self.notes[self.n]) / NotePlayer.SAMPLE_RATE
+                    * self.i
+                )
+            )
 
             # Interpret the amplitude as a signed short (int16), pack it in little-endian,
             # and get the two bytes.

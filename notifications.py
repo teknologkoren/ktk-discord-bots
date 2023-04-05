@@ -2,14 +2,26 @@ import discord
 import streque
 
 
+def create_notification_view(notification_id, button_disabled=False):
+    return discord.ui.View(
+        discord.ui.Button(
+            emoji="✅",
+            label="Markera som läst",
+            style=discord.ButtonStyle.primary,
+            custom_id=f"notification-{notification_id}",
+            disabled=button_disabled,
+        ),
+        timeout=None
+    )
+
+
 async def handle_notification(bot, notification):
     discord_user_id = notification['discord_user_id']
     if discord_user_id is None:
         print(f"User {notification['user_id']} is not connected to Discord.")
         return
 
-    view = MarkReadView()
-    view.children[0].custom_id = f"notification-{notification['notification_id']}"
+    view = create_notification_view(notification['notification_id'])
 
     user = await bot.fetch_user(discord_user_id)
     channel = await user.create_dm()
@@ -17,13 +29,8 @@ async def handle_notification(bot, notification):
     await streque.mark_notification_sent(notification['notification_id'])
 
 
-class MarkReadView(discord.ui.View):
-    def __init__(self):
-        super().__init__(timeout=None)
-
-    @discord.ui.button(label="Markera som läst", style=discord.ButtonStyle.primary, emoji="✅")
-    async def button_callback(self, button, interaction):
-        await streque.mark_notification_acknowledged(
-            interaction.custom_id[len("notification-"):])
-        button.disabled = True
-        await interaction.response.edit_message(view=self)
+async def mark_read_callback(interaction):
+    notification_id = interaction.custom_id[len("notification-"):]
+    await streque.mark_notification_acknowledged(notification_id)
+    await interaction.response.edit_message(
+        view=create_notification_view(notification_id, button_disabled=True))
