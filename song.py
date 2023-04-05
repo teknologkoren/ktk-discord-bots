@@ -4,7 +4,7 @@ from datetime import datetime
 import discord
 from discord import commands, option
 
-import voice
+import player
 from config import FLERSTÄMT_PDF_URL, FLERSTÄMT_MIDI_URL
 
 
@@ -86,7 +86,7 @@ class SongView(discord.ui.View):
 
     @discord.ui.button(label="Ta ton", style=discord.ButtonStyle.primary, emoji="<:stamgaffel:1089692591672537179>")
     async def button_callback(self, button, interaction):
-        await voice.play_note(interaction, self.bot, self.notes)
+        await player.play_note(interaction, self.bot, self.notes)
 
 
 
