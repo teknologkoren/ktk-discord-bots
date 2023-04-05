@@ -108,7 +108,7 @@ class Song(discord.Cog):
         # Flerstämt links
         if song.get('page', None):
             view.add_item(discord.ui.Button(
-                emoji="<:pdf:1092947757498650805>",
+                emoji="<:flerstamt:1093319826925162588>",
                 label="Flerstämt",
                 url=FLERSTÄMT_PDF_URL,
             ))
