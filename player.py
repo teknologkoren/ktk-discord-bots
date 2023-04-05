@@ -1,6 +1,7 @@
 import asyncio
 import math
 import struct
+import sys
 from functools import cache
 
 import discord
@@ -93,13 +94,13 @@ class NotePlayer(discord.AudioSource):
         frame = bytearray()
 
         for _ in range(960):
-            # The factor 2**14 was selected so that
+            # The factor 2**13 was selected so that
             #   - each sample fits in a signed 16-bit integer (could've been no larger than 2**15-1)
             #   - lowered a bit to avoid it being maximum volume
             amplitude = round(
                 2**13 * math.sin(
-                    2 * math.pi * note_to_frequency(self.notes[self.n]) / NotePlayer.SAMPLE_RATE)
-                * self.i)
+                    2 * math.pi * note_to_frequency(self.notes[self.n]) / NotePlayer.SAMPLE_RATE
+                    * self.i))
 
             # Interpret the amplitude as a signed short (int16), pack it in little-endian,
             # and get the two bytes.

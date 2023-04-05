@@ -41,8 +41,8 @@ class Song(discord.Cog):
         )
     
     async def autocomplete_page(self, ctx: discord.AutocompleteContext):
-        # results = [key for key in self.lookup.keys() if key.startswith(ctx.value)]
-        results = [key for key in self.lookup.keys() if not ctx.value or key.lower().startswith(ctx.value.lower())]
+        results = [key for key in self.lookup.keys() 
+                   if not ctx.value or key.lower().startswith(ctx.value.lower())]
 
         # If searching by page number, sort in numeric order.
         if len(ctx.value) == 0 or ctx.value.isnumeric():
@@ -87,7 +87,6 @@ class SongView(discord.ui.View):
     @discord.ui.button(label="Ta ton", style=discord.ButtonStyle.primary, emoji="<:stamgaffel:1089692591672537179>")
     async def button_callback(self, button, interaction):
         await player.play_note(interaction, self.bot, self.notes)
-
 
 
 def setup(bot):
