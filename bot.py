@@ -28,8 +28,9 @@ logger.addHandler(handler)
 # to some interactions without catching them all. And this in turn is needed
 # for responding to button clicks that no longer have a corresponding View.
 class CustomBot(discord.Bot):
-    def __init__(self, description=None, *args, **options):
+    def __init__(self, set_roles_on_join=False, description=None, *args, **options):
         super().__init__(description, *args, **options)
+        self.set_roles_on_join=set_roles_on_join
 
     async def on_interaction(self, interaction):
         custom_id = interaction.custom_id
@@ -48,7 +49,8 @@ class CustomBot(discord.Bot):
         await super().on_interaction(interaction)
 
     async def on_member_join(self, member):
-        await assign_groups.set_extra_roles(member, self)
+        if self.set_roles_on_join:
+            await assign_groups.set_extra_roles(member, self)
 
 
 # Initialize Discord bots.
@@ -58,7 +60,8 @@ intents.members = True
 streque_bot = CustomBot(intents=intents)
 intents = discord.Intents.default()
 intents.message_content = True
-choir_bot = CustomBot(intents=intents)
+intents.members = True
+choir_bot = CustomBot(intents=intents, set_roles_on_join=True)
 
 # Initialize SocketIO client used to listen to events from Streque.
 sio = socketio.AsyncClient(logger=True, engineio_logger=True)

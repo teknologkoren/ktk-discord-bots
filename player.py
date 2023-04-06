@@ -6,6 +6,8 @@ from functools import cache
 
 import discord
 
+from config import DISCORD_GUILD_ID
+
 steps_from_A = {
     'A': 0,
     'B': 2,
@@ -30,13 +32,22 @@ def note_to_frequency(note: str):
 
 
 async def play_note(interaction, bot, notes):
-    if interaction.guild is None:
-        await interaction.response.send_message(
-            content="Jag kan tyvärr inte ta ton från DMs, utan bara från server-kanaler.",
-            ephemeral=True)
-        return
+    user = interaction.user
 
-    if interaction.user.voice is None:
+    if interaction.guild is None:
+        guild = await bot.fetch_guild(DISCORD_GUILD_ID)
+        member = await guild.fetch_member(user.id)
+
+        if member.voice is None:
+            await interaction.response.send_message(
+                content="Gå in i en röstkanal i Kongl. Teknologkörens server och försök igen, "
+                    "så följer jag efter dig och tar ton där!",
+                ephemeral=True)
+            return
+        else:
+            user = member
+
+    if user.voice is None:
         await interaction.response.send_message(
             content="Gå in i en röstkanal och försök igen, så följer jag efter dig och tar ton där!",
             ephemeral=True)
@@ -46,7 +57,7 @@ async def play_note(interaction, bot, notes):
     client = discord.utils.get(bot.voice_clients, guild=interaction.guild)
 
     # Check if the bot is in the same channel as the calling user.
-    channel = interaction.user.voice.channel
+    channel = user.voice.channel
     if client and client.is_connected():
         if client.channel != channel:
             await client.disconnect()
