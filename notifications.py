@@ -11,6 +11,11 @@ def create_notification_view(notification_id, button_disabled=False):
             custom_id=f"notification-{notification_id}",
             disabled=button_disabled,
         ),
+        discord.ui.Button(
+            emoji="<:streque:1090714544634085416>",
+            label="Visa alla",
+            url="https://www.streque.se/notifications",
+        ),
         timeout=None
     )
 
