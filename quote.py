@@ -107,15 +107,17 @@ class Quote(discord.Cog):
                 "they can fix me."
             )
 
-        query = query.lower()
         matches = []
         for quote in quotes:
-            if query in quote['text'].lower() or query in quote['who'].lower():
+            if query.lower() in quote['text'].lower() or query.lower() in quote['who'].lower():
                 matches.append(quote)
 
         if matches:
             result = random.choice(matches)
-            await ctx.respond(embeds=[self.create_embed(result)])
+            await ctx.respond(
+                f"Sökte efter: *{query}*",
+                embeds=[self.create_embed(result)]
+            )
         else:
             await ctx.respond("I couldn't find any quotes matching your query.")
 
