@@ -1,4 +1,7 @@
 import sys
+import traceback
+
+from aiohttp.client_exceptions import ClientResponseError
 
 import streque
 from config import DISCORD_GUILD_ID
@@ -10,7 +13,8 @@ managed_emojis = ('🍺', '🍻', '👌', '🕺', '😟', '🤢', '😵', '💀'
 async def set_emoji(member, new_emoji):
     current_nick = member.nick
     if current_nick is None:
-        print(f"User {member.id} has no nick, so not setting emoji.", file=sys.stderr)
+        print(
+            f"User {member.id} has no nick, so not setting emoji.", file=sys.stderr)
         return
 
     has_emoji = current_nick[0] in managed_emojis
@@ -28,7 +32,8 @@ async def set_emoji(member, new_emoji):
         new_nick = new_emoji + current_nick
 
     if current_nick != new_nick:
-        print(f"Changing nick from {current_nick} to {new_nick}", file=sys.stderr)
+        print(
+            f"Changing nick from {current_nick} to {new_nick}", file=sys.stderr)
         await member.edit(nick=new_nick, reason="Syncing nickname with Streque emoji.")
 
 
@@ -45,5 +50,13 @@ async def periodic_update(bot):
             continue
 
         if member.nick[0] in managed_emojis:
-            streque_user = await streque.get_user_by_discord(member.id)
-            await set_emoji(member, streque_user['bac_emoji'])
+            try:
+                streque_user = await streque.get_user_by_discord(member.id)
+                await set_emoji(member, streque_user['bac_emoji'])
+            except ClientResponseError as e:
+                if e.code == 404:
+                    print(
+                        f"WARNING: Discord user {member.nick} (#{member.nick}) is not "
+                        "connected to Streque.", file=sys.stderr)
+                else:
+                    print(traceback.format_exc(), file=sys.stderr)
