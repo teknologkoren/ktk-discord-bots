@@ -9,6 +9,7 @@ import socketio
 import assign_groups
 import balance_change
 import birthday
+import nickname_emoji
 import notifications
 import player
 from config import CHOIR_BOT_TOKEN, STREQUE_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL
@@ -63,16 +64,25 @@ choir_bot = CustomBot(intents=intents)
 sio = socketio.AsyncClient(logger=True, engineio_logger=True)
 
 
-@sio.on('balance_change')
-async def message(data):
-    await balance_change.handle_balance_change(streque_bot, data)
-
-
 @sio.on('notification')
 async def message(data):
     await notifications.handle_notification(streque_bot, data)
 
 
+@sio.on('balance_change')
+async def message(data):
+    await balance_change.handle_balance_change(streque_bot, data)
+    await nickname_emoji.handle_balance_change(streque_bot, data)
+
+
+# Run every ten minutes with offset 1, i.e. XX:01, XX:11, XX:21, etc.
+@aiocron.crontab('1/10 * * * *')
+async def check_emoji_updates():
+    print(f"{datetime.now()} Periodic nickname emoji sync.")
+    await nickname_emoji.periodic_update(streque_bot)
+
+
+# Run midnight every day.
 @aiocron.crontab('0 0 * * *')
 async def check_birthdays():
     print(f"{datetime.now()} It is midnight, let's check if it is someone's birthday!")
