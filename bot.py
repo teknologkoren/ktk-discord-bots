@@ -6,6 +6,7 @@ import asyncio
 import discord
 import socketio
 
+import assign_groups
 import balance_change
 import birthday
 import notifications
@@ -45,11 +46,17 @@ class CustomBot(discord.Bot):
 
         await super().on_interaction(interaction)
 
+    async def on_member_join(self, member):
+        await assign_groups.set_extra_roles(member, self)
+
 
 # Initialize Discord bots.
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 streque_bot = CustomBot(intents=intents)
+intents = discord.Intents.default()
+intents.message_content = True
 choir_bot = CustomBot(intents=intents)
 
 # Initialize SocketIO client used to listen to events from Streque.

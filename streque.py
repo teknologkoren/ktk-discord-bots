@@ -25,6 +25,10 @@ async def post_request(path):
             return
 
 
+async def get_user_by_discord(discord_user_id):
+    return await get_request(f'/users/by-discord/{discord_user_id}')
+
+
 async def get_random_quote():
     return await get_request('/quotes/random')
 

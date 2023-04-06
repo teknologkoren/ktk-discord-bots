@@ -1,0 +1,15 @@
+ROLES = {
+    10000000000000000:  # role id for group 1
+    [
+        "name 1",
+        "name 2",
+        "...",
+    ],
+    1000000000000000000:  # role id for group 2
+    [
+        "name 2",
+        "name 3",
+        "name 4",
+        "...",
+    ],
+}
