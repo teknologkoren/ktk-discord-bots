@@ -25,7 +25,7 @@ class Song(discord.Cog):
         for song in self.songs:
             self.by_id[song['id']] = song
 
-            if song['page'] is not None:
+            if song.get('page', None) is not None:
                 self.lookup[f"{song['page']}. {song['name']}"] = song
                 self.by_page[song['page']] = song
 
@@ -62,8 +62,13 @@ class Song(discord.Cog):
         else:
             await ctx.respond(
                 embeds=[self.create_embed(result)],
-                view=self.create_song_view(result)
+                view=self.create_song_view(result),
             )
+
+            # Easter egg
+            if result['name'] == "Die Beredsamkeit" and ctx.user.id == 242287639334617090:
+                with open("images/die_beredsamkeit.jpg", "rb") as fp:
+                    await ctx.channel.send(file=discord.File(fp))
 
     def create_embed(self, song):
         if 'page' in song and song['page']:
