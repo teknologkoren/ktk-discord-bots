@@ -38,6 +38,10 @@ class Song(discord.Cog):
         results = [key for key in self.lookup.keys()
                    if not ctx.value or key.lower().startswith(ctx.value.lower())]
 
+        # Shortcut for finding songs not in Flerstämt
+        if ctx.value and ctx.value.lower()[0] == 'x':
+            results = [song['name'] for song in self.songs if not song.get('page', None)]
+
         # If empty query or searching by page number, sort in numeric order.
         if len(ctx.value) == 0 or ctx.value.isnumeric():
             return sorted([key for key in results if key[0:1].isnumeric()], key=lambda song: int(song[:song.find('.')]))
