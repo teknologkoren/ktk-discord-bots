@@ -104,29 +104,32 @@ class Song(discord.Cog):
             label="Ta ton",
             style=discord.ButtonStyle.primary,
             custom_id=f"ta-ton-{song['id']}",
+            row=0,
         ))
 
-        # Sheet music link
-        if song.get('url', None):
-            view.add_item(discord.ui.Button(
-                emoji="<:pdf:1092947757498650805>",
-                label="Not",
-                url=song['url'],
-            ))
+        for link in song['links']:
+            emoji = None
+            row = 2
+            if link[0] == 'Not':
+                emoji = '<:pdf:1092947757498650805>'
+                row = 0
+            elif link[0].startswith('MIDI'):
+                emoji = '🎹'
+                row = 1
+            elif link[0] == 'Sibelius':
+                emoji = '🎶'
+                row = 0
+            elif link[0] == 'Repfiler':
+                emoji = "<:drive:1092948377794252941>"
+                row = 0
 
-        # Flerstämt links
-        if song.get('page', None):
             view.add_item(discord.ui.Button(
-                emoji="<:flerstamt:1093319826925162588>",
-                label="Flerstämt",
-                url=FLERSTÄMT_PDF_URL,
+                emoji=emoji,
+                label=link[0],
+                url=link[1],
+                row=row
             ))
-            view.add_item(discord.ui.Button(
-                emoji="<:drive:1092948377794252941>",
-                label="MIDI-mapp",
-                url=FLERSTÄMT_MIDI_URL,
-            ))
-
+            
         return view
 
 

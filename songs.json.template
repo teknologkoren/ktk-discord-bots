@@ -564,19 +564,16 @@
 }, {
     "id": 87,
     "name": "Leonardo Dreams of His Flying Machine",
-    "page": null,
     "tones": ["F", "C", "Ab", "F", "C"],
     "chord": "Fm"
 }, {
     "id": 88,
     "name": "Richte mich, Gott",
-    "page": null,
     "tones": ["A"],
     "chord": "Am"
 }, {
     "id": 89,
     "name": "Loch Lomond",
-    "page": null,
     "tones": ["Eb"],
     "chord": "Ab"
 }]
