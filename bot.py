@@ -9,9 +9,11 @@ import socketio
 import assign_groups
 import balance_change
 import birthday
+import google_client
 import nickname_emoji
 import notifications
 import player
+import veckomejl
 from config import CHOIR_BOT_TOKEN, STREQUE_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL
 
 # Logging for Discord bot.
@@ -24,9 +26,10 @@ handler.setFormatter(logging.Formatter(
 logger.addHandler(handler)
 
 
-# A custom subclass of `discord.Bot`` is required in order to listen manually
+# A custom subclass of `discord.Bot` is required in order to listen manually
 # to some interactions without catching them all. And this in turn is needed
-# for responding to button clicks that no longer have a corresponding View.
+# for responding to button clicks that no longer have a corresponding View
+# (for example due to the bot having been restarted since the view was created).
 class CustomBot(discord.Bot):
     def __init__(self, description=None, *args, **options):
         super().__init__(description, *args, **options)
@@ -56,12 +59,20 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 streque_bot = CustomBot(intents=intents)
-intents = discord.Intents.default()
-intents.message_content = True
-choir_bot = CustomBot(intents=intents)
+
+if CHOIR_BOT_TOKEN:
+    intents = discord.Intents.default()
+    intents.message_content = True
+    choir_bot = CustomBot(intents=intents)
+else:
+    # To make testing easier, do not require two separate bot accounts.
+    choir_bot = streque_bot
 
 # Initialize SocketIO client used to listen to events from Streque.
 sio = socketio.AsyncClient(logger=True, engineio_logger=True)
+
+# Initialize Google API client.
+google_client = google_client.GoogleAPIClient()
 
 
 @sio.on('notification')
@@ -75,14 +86,22 @@ async def message(data):
     await nickname_emoji.handle_balance_change(streque_bot, data)
 
 
-# Run every ten minutes with offset 1, i.e. XX:01, XX:11, XX:21, etc.
+# Run every ten minutes with offset 1, i.e. XX:01, XX:11, XX:21, etc
+# to check whether any nickname emojis need updating.
 @aiocron.crontab('1/10 * * * *')
 async def check_emoji_updates():
     print(f"{datetime.now()} Periodic nickname emoji sync.")
     await nickname_emoji.periodic_update(streque_bot)
 
 
-# Run midnight every day.
+# Run every minute to check for new emails.
+@aiocron.crontab('*/1 * * * *')
+async def check_emoji_updates():
+    print(f"{datetime.now()} Periodic email check.")
+    await veckomejl.check_for_email(choir_bot, google_client)
+
+
+# Run midnight every day to check for birthdays.
 @aiocron.crontab('0 0 * * *')
 async def check_birthdays():
     print(f"{datetime.now()} It is midnight, let's check if it is someone's birthday!")
@@ -106,6 +125,7 @@ choir_bot.load_extension('club')
 # Start the Discord bot and SocketIO connection to Streque.
 loop = asyncio.get_event_loop()
 loop.create_task(streque_bot.start(STREQUE_BOT_TOKEN))
-loop.create_task(choir_bot.start(CHOIR_BOT_TOKEN))
+if CHOIR_BOT_TOKEN: # Only start the second bot if we have credentials for it.
+    loop.create_task(choir_bot.start(CHOIR_BOT_TOKEN))
 loop.create_task(sio.connect(STREQUE_BASE_URL, auth={'token': STREQUE_TOKEN}))
 loop.run_forever()

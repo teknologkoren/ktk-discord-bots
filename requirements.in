@@ -1,6 +1,21 @@
+# Discord bot framework, fork of discord.py.
 py-cord
-requests
-python-socketio[async_client]
-aiocron
-aiohttp[speedups]
+
+# Needed to send audio to Discord.
 pynacl
+
+# For scheduling tasks to run periodically.
+aiocron
+
+# For making HTTP requests to Streque.
+aiohttp[speedups]
+
+# For subscribing to events from Streque.
+python-socketio[async_client]
+
+# Used to interface with Google APIs in the bot code.
+aiogoogle
+
+# Only needed for the google_creds.py script, used to fetch the Google account credentials.
+google-api-python-client
+google-auth-oauthlib
