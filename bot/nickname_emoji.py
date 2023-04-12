@@ -7,16 +7,21 @@ from bot.clients import streque
 from instance.config import DISCORD_GUILD_ID
 
 # TODO: 🇷🇺 and 🇫🇮 do not seem to work as intended.
-managed_emojis = ('🍺', '🍻', '👌', '🕺', '😟', '🤢', '😵', '💀', '🇷🇺', '🇫🇮')
+managed_emojis = ('🍺', '🍻', '👌', '🕺', '😟', '🤢', '😵', '💀')
+
+
+def map_emoji(emoji):
+    # This feature does not yet support 32-bit emojis. Let's replace the flags with
+    # the skull for now, as a quick fix.
+    if emoji == '🇷🇺' or emoji == '🇫🇮':
+        return '💀'
+    else:
+        return emoji
 
 
 async def set_emoji(member, new_emoji):
-    current_nick = member.nick
-    if current_nick is None:
-        print(
-            f"User {member.id} has no nick, so not setting emoji.", file=sys.stderr)
-        return
-
+    new_emoji = map_emoji(new_emoji)
+    current_nick = member.display_name
     has_emoji = current_nick[0] in managed_emojis
     current_emoji = current_nick[0] if has_emoji else None
 
