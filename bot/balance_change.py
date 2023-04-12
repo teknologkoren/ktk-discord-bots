@@ -53,8 +53,8 @@ async def send_low_balance_alert(bot, discord_user_id, balance):
     user = await bot.fetch_user(discord_user_id)
     channel = await user.create_dm()
     await channel.send(
-        f"Det börjar bli ont om pengar på ditt Streque-konto, du har för "
-        "närvarande {kr(balance)} kvar. Dags att fylla på?")
+        "Det börjar bli ont om pengar på ditt Streque-konto, du har för "
+        f"närvarande {kr(balance)} kvar. Dags att fylla på?")
 
 
 async def send_negative_balance_alert(bot, discord_user_id, balance):
