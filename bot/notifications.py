@@ -1,5 +1,5 @@
 import discord
-import streque
+from bot.clients import streque
 
 
 def create_notification_view(notification_id, button_disabled=False):

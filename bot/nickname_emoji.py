@@ -3,8 +3,8 @@ import traceback
 
 from aiohttp.client_exceptions import ClientResponseError
 
-import streque
-from config import DISCORD_GUILD_ID
+from bot.clients import streque
+from instance.config import DISCORD_GUILD_ID
 
 # TODO: 🇷🇺 and 🇫🇮 do not seem to work as intended.
 managed_emojis = ('🍺', '🍻', '👌', '🕺', '😟', '🤢', '😵', '💀', '🇷🇺', '🇫🇮')

@@ -1,7 +1,6 @@
 import asyncio
 import math
 import struct
-import sys
 from functools import cache
 
 import discord

@@ -3,13 +3,11 @@ import json
 import discord
 from discord import commands, option
 
-from config import FLERSTÄMT_PDF_URL, FLERSTÄMT_MIDI_URL
-
 
 class Song(discord.Cog):
     def __init__(self, bot):
         self.bot = bot
-        with open("songs.json", "r") as f:
+        with open("instance/songs.json", "r") as f:
             self.songs = json.load(f)
 
         # Lookup table from any valid search query (name, alternative names,

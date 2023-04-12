@@ -6,15 +6,17 @@ import asyncio
 import discord
 import socketio
 
-import assign_groups
-import balance_change
-import birthday
-import google_client
-import nickname_emoji
-import notifications
-import player
-import veckomejl
-from config import CHOIR_BOT_TOKEN, STREQUE_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL
+from bot import (
+    assign_groups,
+    balance_change,
+    birthday,
+    nickname_emoji,
+    notifications,
+    player,
+    veckomejl,
+)
+from bot.clients import google
+from instance.config import CHOIR_BOT_TOKEN, STREQUE_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL
 
 # Logging for Discord bot.
 logger = logging.getLogger('discord')
@@ -72,7 +74,7 @@ else:
 sio = socketio.AsyncClient(logger=True, engineio_logger=True)
 
 # Initialize Google API client.
-google_client = google_client.GoogleAPIClient()
+google_client = google.GoogleAPIClient()
 
 
 @sio.on('notification')
@@ -118,9 +120,9 @@ async def on_ready():
     print(f'We have logged in as {choir_bot.user}')
 
 
-streque_bot.load_extension('quote')
-choir_bot.load_extension('song')
-choir_bot.load_extension('club')
+streque_bot.load_extension('bot.quote')
+choir_bot.load_extension('bot.song')
+choir_bot.load_extension('bot.club')
 
 # Start the Discord bot and SocketIO connection to Streque.
 loop = asyncio.get_event_loop()

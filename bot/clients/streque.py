@@ -1,5 +1,5 @@
 import aiohttp
-from config import STREQUE_URL, STREQUE_TOKEN
+from instance.config import STREQUE_URL, STREQUE_TOKEN
 
 
 # Make a GET request, check that it was successful, and return the response content

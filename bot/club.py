@@ -1,8 +1,9 @@
 import json
+
 import discord
 from discord import commands, option
 
-from config import CARL_REACTION_ROLE_CHANNEL_ID, CARL_REACTION_ROLE_MESSAGE_ID, DISCORD_CLUB_CATEGORY_ID
+from instance.config import CARL_REACTION_ROLE_CHANNEL_ID, CARL_REACTION_ROLE_MESSAGE_ID, DISCORD_CLUB_CATEGORY_ID
 
 
 class Club(discord.Cog):

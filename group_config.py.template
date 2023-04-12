@@ -5,7 +5,7 @@ ROLES = {
         "name 2",
         "...",
     ],
-    1000000000000000000:  # role id for group 2
+    1000000000000000001:  # role id for group 2
     [
         "name 2",
         "name 3",

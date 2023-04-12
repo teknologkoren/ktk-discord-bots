@@ -1,11 +1,10 @@
 import random
 import re
-import sys
 
 import discord
 
-from config import DISCORD_GUILD_ID, DISCORD_BIRTHDAY_CHANNEL_ID
-from config import VECKOMEJL_FOLDER_ID, VECKOMEJL_MAILING_LIST
+from instance.config import DISCORD_GUILD_ID, DISCORD_BIRTHDAY_CHANNEL_ID
+from instance.config import VECKOMEJL_FOLDER_ID, VECKOMEJL_MAILING_LIST
 
 NUMBER_PATTERN = re.compile(r'\d+')
 VECKOMEJL_MESSAGES = [

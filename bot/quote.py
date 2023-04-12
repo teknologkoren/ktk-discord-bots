@@ -6,7 +6,8 @@ from datetime import datetime
 
 import discord
 from discord import commands, option
-import streque
+
+from bot.clients import streque
 
 
 class Quote(discord.Cog):

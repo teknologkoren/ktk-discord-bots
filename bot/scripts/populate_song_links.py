@@ -7,9 +7,9 @@ import pprint
 import re
 import sys
 
-import google_client
+from ..clients import google_client
 
-from config import (
+from instance.config import (
     DRIVE_SHEET_MUSIC_FOLDER,
     DRIVE_MIDI_FULL_FOLDER,
     DRIVE_MIDI_PARTS_FOLDER,

@@ -1,4 +1,4 @@
-from config import DISCORD_GUILD_ID, DISCORD_VIP_ROLE_ID, DISCORD_VIP_CHANNEL_ID
+from instance.config import DISCORD_GUILD_ID, DISCORD_VIP_ROLE_ID, DISCORD_VIP_CHANNEL_ID
 
 
 async def add_to_vip(bot, user_id):

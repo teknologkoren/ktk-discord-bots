@@ -1,8 +1,5 @@
 __pycache__/
-config.py
-credentials.json
 discord.log
 group_config.py
-songs.json
-token.json
+instance/
 venv/

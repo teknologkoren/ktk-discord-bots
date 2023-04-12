@@ -1,8 +1,8 @@
 import sys
-from config import DISCORD_VIP_ROLE_ID, DISCORD_VIP_CHANNEL_ID
 
-import streque
-from group_config import ROLES
+from bot.clients import streque
+from instance.config import DISCORD_VIP_ROLE_ID, DISCORD_VIP_CHANNEL_ID
+from instance.group_config import ROLES
 
 
 async def set_extra_roles(member, bot):

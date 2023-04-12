@@ -1,8 +1,8 @@
-from datetime import datetime
-import streque
 import sys
+from datetime import datetime
 
-from config import DISCORD_GUILD_ID, DISCORD_BIRTHDAY_CHANNEL_ID, DISCORD_ACTIVE_ROLE_ID
+from bot.clients import streque
+from instance.config import DISCORD_GUILD_ID, DISCORD_BIRTHDAY_CHANNEL_ID, DISCORD_ACTIVE_ROLE_ID
 
 async def congratulate(bot):
     now = datetime.now()

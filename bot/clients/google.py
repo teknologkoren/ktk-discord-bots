@@ -4,12 +4,12 @@ import sys
 from aiogoogle.auth.creds import ClientCreds, UserCreds
 from aiogoogle import Aiogoogle
 
-from config import GMAIL_LABEL_SENT_TO_DISCORD
+from instance.config import GMAIL_LABEL_SENT_TO_DISCORD
 
 
 class GoogleAPIClient:
     def __init__(self):
-        with open('token.json', 'r') as f:
+        with open('instance/token.json', 'r') as f:
             creds = json.load(f)
 
         self.client_creds = ClientCreds(
