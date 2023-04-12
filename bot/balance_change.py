@@ -86,7 +86,7 @@ async def handle_balance_change(bot, balance_change):
 
     # Balance at 0 kr or below
     if old > 0 and new <= 0:
-        send_negative_balance_alert(bot, discord_user_id, new)
+        await send_negative_balance_alert(bot, discord_user_id, new)
     # Balance below 100 kr
     elif old >= 10_000 and new < 10_000:
-        send_low_balance_alert(bot, discord_user_id, new)
+        await send_low_balance_alert(bot, discord_user_id, new)
