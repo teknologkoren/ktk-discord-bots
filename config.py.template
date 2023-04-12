@@ -15,6 +15,7 @@ FLERSTAMT_PDF_URL = "http://example.com"
 FLERSTAMT_MIDI_URL = "http://example.com"
 VECKOMEJL_FOLDER_ID = '<drive_folder_id>'
 VECKOMEJL_MAILING_LIST = 'mailing-list@example.com'
+DISCORD_VECKOMEJL_CHANNEL_ID = 1000000000000000000
 GMAIL_LABEL_SENT_TO_DISCORD = 'some_label_id'
 
 # Only needed for running the populate_song_links script.

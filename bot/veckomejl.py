@@ -3,7 +3,7 @@ import re
 
 import discord
 
-from instance.config import DISCORD_GUILD_ID, DISCORD_BIRTHDAY_CHANNEL_ID
+from instance.config import DISCORD_GUILD_ID, DISCORD_VECKOMEJL_CHANNEL_ID
 from instance.config import VECKOMEJL_FOLDER_ID, VECKOMEJL_MAILING_LIST
 
 NUMBER_PATTERN = re.compile(r'\d+')
@@ -69,7 +69,7 @@ async def notify_if_veckomejl(bot, google_client, subject):
 
     # Send the notification!
     guild = await bot.fetch_guild(DISCORD_GUILD_ID)
-    channel = await guild.fetch_channel(DISCORD_BIRTHDAY_CHANNEL_ID)
+    channel = await guild.fetch_channel(DISCORD_VECKOMEJL_CHANNEL_ID)
     await channel.send(
         f"{random.choice(VECKOMEJL_MESSAGES)} **{subject}**",
         view=view
@@ -87,7 +87,7 @@ async def check_for_email(bot, google_client):
     if not await notify_if_veckomejl(bot, google_client, email.get('subject', None)):
         # If it wasn't a veckomejl, send a simpler notification with just the subject and sender.
         guild = await bot.fetch_guild(DISCORD_GUILD_ID)
-        channel = await guild.fetch_channel(DISCORD_BIRTHDAY_CHANNEL_ID)
+        channel = await guild.fetch_channel(DISCORD_VECKOMEJL_CHANNEL_ID)
         await channel.send(
             f"Nytt mejl till aktiva: **{email.get('subject', None)}** från *{email.get('sender', None)}*"
         )
