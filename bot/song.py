@@ -108,7 +108,7 @@ class Song(discord.Cog):
         for link in song['links']:
             emoji = None
             row = 2
-            if link[0] == 'Not':
+            if link[0].startswith('Not'):
                 emoji = '<:pdf:1092947757498650805>'
                 row = 0
             elif link[0].startswith('MIDI'):
