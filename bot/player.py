@@ -15,6 +15,8 @@ steps_from_A = {
     'G': 10,
 }
 
+vote_emojis = ('sine', 'isak')
+
 
 @cache
 def note_to_frequency(note: str):
@@ -26,6 +28,26 @@ def note_to_frequency(note: str):
             offset -= 1
 
     return 440 * (2 ** (offset/12))
+
+
+def get_winning_vote(message):
+    best = []
+    count = 0
+    for reaction in message.reactions:
+        # There are currently no unicode emojis for voting.
+        if isinstance(reaction.emoji, str):
+            continue
+
+        if reaction.count >= count and reaction.emoji.name in vote_emojis:
+            if reaction.count > count:
+                best = []
+                count = reaction.count
+            best.append(reaction.emoji.name)
+
+    if best:
+        return best[0]
+    else:
+        return None
 
 
 async def play_note(interaction, bot, notes):
@@ -52,7 +74,7 @@ async def play_note(interaction, bot, notes):
             client = None
 
     # Connect to the voice channel that the calling user is in.
-    if not client:
+    if not client or not client.is_connected():
         client = await channel.connect()
 
         # Wait a short duration to not have the notes start playing directly after
@@ -60,7 +82,12 @@ async def play_note(interaction, bot, notes):
         await asyncio.sleep(0.5)
 
     # Play the note sequence.
-    client.play(NotePlayer(notes))
+    # We need to fetch the message explicitly to get the reactions.
+    message = await interaction.channel.fetch_message(interaction.message.id)
+    if get_winning_vote(message) == 'isak':
+        client.play(FilePlayer("isak", notes))
+    else:
+        client.play(SineWavePlayer(notes))
 
     # Respond to the interaction to let Discord know it was successful.
     await interaction.response.edit_message()
@@ -74,7 +101,7 @@ async def play_note(interaction, bot, notes):
 
 # Serves raw audio packets in 16-bit 48KHz stereo PCM.
 # Reference: the data sub-chunk spec in https://archive.is/7pUpZ#selection-160.0-160.1
-class NotePlayer(discord.AudioSource):
+class SineWavePlayer(discord.AudioSource):
     SAMPLE_RATE = 48_000
 
     def __init__(self, notes):
@@ -105,7 +132,7 @@ class NotePlayer(discord.AudioSource):
                 math.sin(
                     2 * math.pi *
                     note_to_frequency(
-                        self.notes[self.n]) / NotePlayer.SAMPLE_RATE
+                        self.notes[self.n]) / SineWavePlayer.SAMPLE_RATE
                     * self.i
                 )
             )
@@ -125,3 +152,36 @@ class NotePlayer(discord.AudioSource):
 
     def is_opus(self):
         return False
+
+
+class FilePlayer(discord.AudioSource):
+
+    def __init__(self, folder, notes):
+        # List of notes to play.
+        self.notes = notes
+
+        # The index of the currently playing note.
+        self.n = -1
+
+        # The folder in /audio to get the audio files from.
+        self.folder = folder
+
+        # The FFmpegPCMAudio player for the current note.
+        self.ffmpeg = None
+
+    def next_note(self):
+        self.n += 1
+        if self.n >= len(self.notes):
+            return False
+
+        self.ffmpeg = discord.FFmpegPCMAudio(
+            f"audio/{self.folder}/{self.notes[self.n]}.wav")
+        return True
+
+    def read(self):
+        if self.ffmpeg is None:
+            self.next_note()
+        frame = self.ffmpeg.read()
+        if not frame and self.next_note():
+            frame = self.ffmpeg.read()
+        return frame

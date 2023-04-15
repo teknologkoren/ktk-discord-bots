@@ -1,7 +1,10 @@
 import json
+import sys
 
 import discord
 from discord import commands, option
+
+from instance.config import DISCORD_SINE_EMOJI_ID, DISCORD_ISAK_EMOJI_ID
 
 
 class Song(discord.Cog):
@@ -62,10 +65,25 @@ class Song(discord.Cog):
         if result is None:
             await ctx.respond("Jag kunde inte hitta sången du letar efter. :(")
         else:
-            await ctx.respond(
-                embeds=[self.create_embed(result)],
-                view=self.create_song_view(result),
-            )
+            # Send response message.
+            embed = self.create_embed(result)
+            view = self.create_song_view(result)
+            await ctx.send_response(embeds=[embed], view=view)
+
+            # Add reactions to select sound.
+            vote = None
+            async for message in ctx.channel.history():
+                if not message.embeds:
+                    continue
+                if message.embeds[0].title == embed.title:
+                    vote = message
+                    break
+
+            if vote is None:
+                print("Could not find the song message just sent.", file=sys.stderr)
+            else:
+                await vote.add_reaction(f"<:sine:{DISCORD_SINE_EMOJI_ID}>")
+                await vote.add_reaction(f"<:isak:{DISCORD_ISAK_EMOJI_ID}>")
 
             # Easter egg
             if result['name'] == "Die Beredsamkeit" and ctx.user.id == 242287639334617090:
@@ -105,7 +123,7 @@ class Song(discord.Cog):
             row=0,
         ))
 
-        for link in song['links']:
+        for link in song.get('links', ()):
             emoji = None
             row = 2
             if link[0].startswith('Not'):
