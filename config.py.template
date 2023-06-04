@@ -1,23 +1,36 @@
-STREQUE_BASE_URL = 'http://localhost:5555'
+# Streque integration. If any of these are None, the integration will be disabled.
+STREQUE_BASE_URL = None # e.g. 'http://localhost:5000'
 STREQUE_URL = STREQUE_BASE_URL + '/api/v1'
-STREQUE_TOKEN = 'very secret token should be here'
-STREQUE_BOT_TOKEN = 'another very secret token should be here'
-CHOIR_BOT_TOKEN = 'yet another very secret token should be here'
-DISCORD_GUILD_ID = 1000000000000000000
-DISCORD_VIP_ROLE_ID = 1000000000000000000
-DISCORD_VIP_CHANNEL_ID = 1000000000000000000
-DISCORD_BIRTHDAY_CHANNEL_ID = 1000000000000000000
-DISCORD_ACTIVE_ROLE_ID = 1000000000000000000
-DISCORD_SINE_EMOJI_ID = 1000000000000000000
-DISCORD_ISAK_EMOJI_ID = 1000000000000000000
-DISCORD_CLUB_CATEGORY_ID = 1000000000000000000
-CARL_REACTION_ROLE_MESSAGE_ID = 1000000000000000000
-CARL_REACTION_ROLE_CHANNEL_ID = 1000000000000000000
-FLERSTAMT_PDF_URL = "http://example.com"
-FLERSTAMT_MIDI_URL = "http://example.com"
-VECKOMEJL_FOLDER_ID = '<drive_folder_id>'
+STREQUE_TOKEN = None
+
+# Discord credentials. STREQUE_BOT_TOKEN is required. If CHOIR_BOT_TOKEN is None,
+# the functionalities of Körbot will be put in the Streque bot.
+STREQUE_BOT_TOKEN = 'secret token'
+CHOIR_BOT_TOKEN = None
+
+# Discord resource IDs (snowflakes). These are all integers. If any of these are
+# None, some functionality may be disabled or broken.
+DISCORD_GUILD_ID = None
+DISCORD_VIP_ROLE_ID = None
+DISCORD_VIP_CHANNEL_ID = None
+DISCORD_BIRTHDAY_CHANNEL_ID = None
+DISCORD_ACTIVE_ROLE_ID = None
+DISCORD_VECKOMEJL_CHANNEL_ID = None
+DISCORD_CLUB_CATEGORY_ID = None
+DISCORD_SINE_EMOJI_ID = None
+DISCORD_ISAK_EMOJI_ID = None
+CARL_REACTION_ROLE_MESSAGE_ID = None
+CARL_REACTION_ROLE_CHANNEL_ID = None
+
+# Drive folder ID for veckomejl documents to link to. If None, the email notifications
+# will not have any attached document links.
+VECKOMEJL_FOLDER_ID = None
+
+# Only emails sent to this mailing list will cause notifications. If None, all
+# incoming in the inbox of the connected Gmail account will do so.
 VECKOMEJL_MAILING_LIST = 'mailing-list@example.com'
-DISCORD_VECKOMEJL_CHANNEL_ID = 1000000000000000000
+
+# ID of label to add to messages that have been notified about.
 GMAIL_LABEL_SENT_TO_DISCORD = 'some_label_id'
 
 # Only needed for running the populate_song_links script.
