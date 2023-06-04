@@ -98,7 +98,7 @@ async def check_emoji_updates():
 
 # Run every minute to check for new emails.
 @aiocron.crontab('*/1 * * * *')
-async def check_emoji_updates():
+async def check_email():
     print(f"{datetime.now()} Periodic email check.")
     await veckomejl.check_for_email(choir_bot, google_client)
 
