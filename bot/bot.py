@@ -15,7 +15,7 @@ from bot import (
     player,
     veckomejl,
 )
-from bot.clients import google
+from bot.clients import google, rotary_phone
 from instance.config import CHOIR_BOT_TOKEN, STREQUE_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL
 
 # Logging for Discord bot.
@@ -48,6 +48,12 @@ class CustomBot(discord.Bot):
                 song_id = int(custom_id[len('ta-ton-'):])
                 song = self.get_cog('Song').by_id[song_id]
                 await player.play_note(interaction, self, song['tones'])
+                return
+
+            elif custom_id.startswith('call-'):
+                song_id = int(custom_id[len('call-'):])
+                song = self.get_cog('Song').by_id[song_id]
+                await rotary_phone.play_note(interaction, song['tones'])
                 return
 
         await super().on_interaction(interaction)

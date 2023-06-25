@@ -123,6 +123,14 @@ class Song(discord.Cog):
             row=0,
         ))
 
+        view.add_item(discord.ui.Button(
+            emoji="☎",
+            label="Ring Sqrubben",
+            style=discord.ButtonStyle.green,
+            custom_id=f"call-{song['id']}",
+            row=0,
+        ))
+
         for link in song.get('links', ()):
             emoji = None
             row = 2
