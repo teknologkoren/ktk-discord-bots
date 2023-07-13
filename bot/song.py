@@ -4,7 +4,7 @@ import sys
 import discord
 from discord import commands, option
 
-from instance.config import DISCORD_SINE_EMOJI_ID, DISCORD_ISAK_EMOJI_ID
+from instance.config import DISCORD_SINE_EMOJI_ID, DISCORD_ISAK_EMOJI_ID, ROTARY_PHONE_URL
 
 
 class Song(discord.Cog):
@@ -123,13 +123,14 @@ class Song(discord.Cog):
             row=0,
         ))
 
-        view.add_item(discord.ui.Button(
-            emoji="☎",
-            label="Ring Sqrubben",
-            style=discord.ButtonStyle.green,
-            custom_id=f"call-{song['id']}",
-            row=0,
-        ))
+        if ROTARY_PHONE_URL is not None:
+            view.add_item(discord.ui.Button(
+                emoji="☎",
+                label="Ring Sqrubben",
+                style=discord.ButtonStyle.green,
+                custom_id=f"call-{song['id']}",
+                row=0,
+            ))
 
         for link in song.get('links', ()):
             emoji = None

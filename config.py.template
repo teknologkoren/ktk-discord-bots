@@ -1,3 +1,5 @@
+## Config template. Copy this to instance/config.py and set the desired constants.
+
 # Streque integration. If any of these are None, the integration will be disabled.
 STREQUE_BASE_URL = None # e.g. 'http://localhost:5000'
 STREQUE_URL = STREQUE_BASE_URL + '/api/v1'
