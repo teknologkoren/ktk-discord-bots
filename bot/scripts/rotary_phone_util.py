@@ -4,26 +4,10 @@
 
 import json
 
-# Mapping from note name to mp3 file number on the device.
-NOTE_FILES = {
-    "G#": 2,
-    "Ab": 3,
-    "A": 4,
-    "A#": 5,
-    "Bb": 6,
-    "B": 7,
-    "C": 8,
-    "C#": 9,
-    "Db": 10,
-    "D": 11,
-    "D#": 12,
-    "Eb": 13,
-    "E": 14,
-    "F": 15,
-    "F#": 16,
-    "Gb": 17,
-    "G": 18
-}
+def note_to_filename(note):
+    if len(note) == 1:
+        note += ' '
+    return f'"{note}"'
 
 # Load all songs with a page number into `songs`.
 songs = []
@@ -45,9 +29,11 @@ for song in sorted(songs, key=lambda song: str(song['page'])):
     print("  {", song['page'], ", {", end="", sep="")
     notes = []
     for note in song['tones']:
-        notes.append(str(NOTE_FILES[note]))
+        notes.append(note_to_filename(note))
     for i in range(5-len(song['tones'])):
-        notes.append("-1")
-    print(", ".join(notes), end="}},\n")
+        notes.append('""')
+    print(", ".join(notes), end="}")
+    print(f", {len(song['tones'])}", end="")
+    print("},")
     
 print("}")
