@@ -6,7 +6,12 @@ import json
 
 def note_to_filename(note):
     if len(note) == 1:
-        note += ' '
+        note += note
+    elif note[1] == '#':
+        note = note[0] + "S"
+    elif note[1] == 'b':
+        note = note[0] + "F"
+
     return f'"{note}"'
 
 # Load all songs with a page number into `songs`.
