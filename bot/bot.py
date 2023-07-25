@@ -110,7 +110,7 @@ async def check_email():
 
 
 # Run midnight every day to check for birthdays.
-@aiocron.crontab('0 0 * * *')
+@aiocron.crontab('0 12 * * *')
 async def check_birthdays():
     print(f"{datetime.now()} It is midnight, let's check if it is someone's birthday!")
     await birthday.congratulate(streque_bot)
