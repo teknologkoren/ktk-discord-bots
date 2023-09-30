@@ -24,7 +24,7 @@ VECKOMEJL_MESSAGES = [
     ),
     (
         "Av alla infoformer är det mejlet, som kan få mig varm med sin retrocharm. Oj, "
-        "vad det blir hett av PRoletärens vett! Tacka vet jag veckomejlet:"
+        "vad det blir hett av ordförandens vett! Tacka vet jag veckomejlet:"
     ),
 ]
 
