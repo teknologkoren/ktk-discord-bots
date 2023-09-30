@@ -109,7 +109,14 @@ async def check_email():
     await veckomejl.check_for_email(choir_bot, google_client)
 
 
-# Run midnight every day to check for birthdays.
+# Run every Sunday at 10 AM to remind the board to fill out the weekly email document
+@aiocron.crontab('0 10 * * 0')
+async def weekly_email_reminder():
+    print(f"{datetime.now()} Reminding the board about the weekly email.")
+    await veckomejl.board_reminder(choir_bot)
+
+
+# Run noon every day to check for birthdays.
 @aiocron.crontab('0 12 * * *')
 async def check_birthdays():
     print(f"{datetime.now()} It is midnight, let's check if it is someone's birthday!")

@@ -5,6 +5,7 @@ import discord
 
 from instance.config import DISCORD_GUILD_ID, DISCORD_VECKOMEJL_CHANNEL_ID
 from instance.config import VECKOMEJL_FOLDER_ID, VECKOMEJL_MAILING_LIST
+from instance.config import BOARD_VECKOMEJL_LINK, DISCORD_BOARD_GUILD_ID, DISCORD_BOARD_VECKOMEJL_CHANNEL_ID
 
 NUMBER_PATTERN = re.compile(r'\d+')
 VECKOMEJL_MESSAGES = [
@@ -91,3 +92,27 @@ async def check_for_email(bot, google_client):
         await channel.send(
             f"Nytt mejl till aktiva: **{email.get('subject', None)}** från *{email.get('sender', None)}*"
         )
+
+
+async def board_reminder(bot):
+    if DISCORD_BOARD_GUILD_ID is None or DISCORD_BOARD_VECKOMEJL_CHANNEL_ID is None:
+        print("Board Discord guild is not configured.")
+
+    # Send the notification!
+    if BOARD_VECKOMEJL_LINK is not None:
+        view = discord.ui.View(
+            discord.ui.Button(
+                emoji='<:sheets:1157594624160976896>',
+                label='Inför nästa veckomejl (levande dokument)',
+                url=BOARD_VECKOMEJL_LINK,
+            )
+        )
+    else:
+        view = None
+
+    guild = await bot.fetch_guild(DISCORD_BOARD_GUILD_ID)
+    channel = await guild.fetch_channel(DISCORD_BOARD_VECKOMEJL_CHANNEL_ID)
+    await channel.send(
+        "Sista chansen att få med info i veckomejlet! 📧",
+        view=view
+    )
