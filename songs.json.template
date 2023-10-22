@@ -576,4 +576,9 @@
     "name": "Loch Lomond",
     "tones": ["Eb"],
     "chord": "Ab"
+}, {
+	"id": 90,
+	"name": "Veckans drink",
+	"tones": ["G", "E", "G", "C"],
+	"chord": "C"
 }]

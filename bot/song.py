@@ -70,6 +70,16 @@ class Song(discord.Cog):
             view = self.create_song_view(result)
             await ctx.send_response(embeds=[embed], view=view)
 
+            # Drink of the week sheet music
+            if result['name'] == "Veckans drink":
+                with open("images/veckans_drink_2023-04-16.png", "rb") as fp:
+                    await ctx.channel.send(file=discord.File(fp))
+
+            # Easter egg
+            if result['name'] == "Die Beredsamkeit" and ctx.user.id == 242287639334617090:
+                with open("images/die_beredsamkeit.jpg", "rb") as fp:
+                    await ctx.channel.send(file=discord.File(fp))
+
             # Add reactions to select sound.
             vote = None
             async for message in ctx.channel.history():
@@ -84,11 +94,6 @@ class Song(discord.Cog):
             else:
                 await vote.add_reaction(f"<:sine:{DISCORD_SINE_EMOJI_ID}>")
                 await vote.add_reaction(f"<:isak:{DISCORD_ISAK_EMOJI_ID}>")
-
-            # Easter egg
-            if result['name'] == "Die Beredsamkeit" and ctx.user.id == 242287639334617090:
-                with open("images/die_beredsamkeit.jpg", "rb") as fp:
-                    await ctx.channel.send(file=discord.File(fp))
 
     def create_embed(self, song):
         if 'page' in song and song['page']:
