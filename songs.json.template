@@ -399,7 +399,7 @@
     "chord": "Bb"
 }, {
     "id": 62,
-    "name": "Snappt jagar stormen våra år",
+    "name": "Snabbt jagar stormen våra år",
     "page": "148",
     "tones": ["G"],
     "chord": "c"
@@ -546,8 +546,8 @@
     "name": "Ångbåtssång",
     "alt": ["Sätt maskinen igång"],
     "page": "162",
-    "tones": ["Eb", "C", "Ab", "Ab"],
-    "chord": "Ab"
+    "tones": ["A", "D", "F#", "D"],
+    "chord": "D"
 }, {
     "id": 85,
     "name": "Än än gång däran",
