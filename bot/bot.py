@@ -13,10 +13,11 @@ from bot import (
     nickname_emoji,
     notifications,
     player,
+    potato,
     veckomejl,
 )
 from bot.clients import google, rotary_phone
-from instance.config import CHOIR_BOT_TOKEN, STREQUE_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL
+from instance.config import CHOIR_BOT_TOKEN, STREQUE_BOT_TOKEN, STREQUE_TOKEN, STREQUE_BASE_URL, POTATO_BOT_TOKEN
 
 # Logging for Discord bot.
 logger = logging.getLogger('discord')
@@ -76,6 +77,13 @@ else:
     # To make testing easier, do not require two separate bot accounts.
     choir_bot = streque_bot
 
+if POTATO_BOT_TOKEN:
+    potato_bot = CustomBot()
+else:
+    # To make testing easier, do not require two separate bot accounts.
+    potato_bot = streque_bot
+
+
 # Initialize SocketIO client used to listen to events from Streque.
 sio = socketio.AsyncClient(logger=True, engineio_logger=True)
 
@@ -123,6 +131,12 @@ async def check_birthdays():
     await birthday.congratulate(streque_bot)
 
 
+# Run every morning December 1st-24th to post potato video.
+@aiocron.crontab('0 7 * * *')
+async def check_potato():
+    await potato.post(potato_bot)
+
+
 @streque_bot.event
 async def on_ready():
     print(f'We have logged in as {streque_bot.user}')
@@ -142,5 +156,7 @@ loop = asyncio.get_event_loop()
 loop.create_task(streque_bot.start(STREQUE_BOT_TOKEN))
 if CHOIR_BOT_TOKEN: # Only start the second bot if we have credentials for it.
     loop.create_task(choir_bot.start(CHOIR_BOT_TOKEN))
+if POTATO_BOT_TOKEN: # Only start the second bot if we have credentials for it.
+    loop.create_task(potato_bot.start(POTATO_BOT_TOKEN))
 loop.create_task(sio.connect(STREQUE_BASE_URL, auth={'token': STREQUE_TOKEN}))
 loop.run_forever()
