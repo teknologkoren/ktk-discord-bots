@@ -123,11 +123,13 @@ class GoogleAPIClient:
 
             result = await aiogoogle.as_user(
                 self.drive.files.list(
-                    corpora="user",
+                    corpora="allDrives",
                     q=f"'{folder_id}' in parents and trashed = false",
                     fields="files(name,webViewLink,webContentLink,mimeType)",
                     orderBy="name" if sort_by_name else "createdTime desc",
                     pageSize=1000,
+                    supportsAllDrives=True,
+                    includeItemsFromAllDrives=True,
                 ),
                 raise_for_status=True,
             )
