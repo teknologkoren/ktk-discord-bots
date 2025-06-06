@@ -1,10 +1,24 @@
 import json
+import re
 import sys
+import unicodedata
 
 import discord
 from discord import commands, option
 
 from instance.config import DISCORD_SINE_EMOJI_ID, DISCORD_ISAK_EMOJI_ID, ROTARY_PHONE_URL
+
+
+def clean_string(s):
+    s = s.lower()
+    # Do some unicode normalization.
+    s = unicodedata.normalize('NFKD', s)
+    # Remove all characters except alphanumeric and spaces
+    s = re.sub(r'[^a-zA-Z0-9\s]', '', s)
+    # Replace multiple spaces with a single space
+    s = re.sub(r'\s+', ' ', s)
+    # Strip leading/trailing whitespace
+    return s.strip()
 
 
 class Song(discord.Cog):
@@ -37,7 +51,7 @@ class Song(discord.Cog):
 
     async def autocomplete_callback(self, ctx: discord.AutocompleteContext):
         results = [key for key in self.lookup.keys()
-                   if not ctx.value or key.lower().startswith(ctx.value.lower())]
+                   if not ctx.value or clean_string(key).startswith(clean_string(ctx.value))]
 
         # Shortcut for finding songs not in Flerstämt
         if ctx.value and ctx.value.lower()[0] == 'x':
