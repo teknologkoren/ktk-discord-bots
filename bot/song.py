@@ -114,21 +114,23 @@ class Song(discord.Cog):
             title = f"{song['page']}. {song['name']}"
         else:
             title = song['name']
+        fields = []
+        if 'chord' in song:
+            fields.append(discord.EmbedField(
+                name="Startackord / tonart",
+                value=song['chord'],
+                inline=True
+            ))
+        if 'tones' in song:
+            fields.append(discord.EmbedField(
+                name="Starttoner",
+                value=", ".join(song['tones']),
+                inline=True
+            ))
         return discord.Embed(
             title=title,
             description="\n".join(song['alt']) if 'alt' in song else "",
-            fields=[
-                discord.EmbedField(
-                    name=f"Startackord / tonart",
-                    value=song.get('chord', ''),
-                    inline=True
-                ),
-                discord.EmbedField(
-                    name=f"Starttoner",
-                    value=", ".join(song.get('tones', [])),
-                    inline=True
-                ),
-            ],
+            fields=fields,
         )
 
     def create_song_view(self, song):
