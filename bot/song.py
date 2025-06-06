@@ -120,12 +120,12 @@ class Song(discord.Cog):
             fields=[
                 discord.EmbedField(
                     name=f"Startackord / tonart",
-                    value=song['chord'],
+                    value=song.get('chord', ''),
                     inline=True
                 ),
                 discord.EmbedField(
                     name=f"Starttoner",
-                    value=", ".join(song['tones']),
+                    value=", ".join(song.get('tones', [])),
                     inline=True
                 ),
             ],
