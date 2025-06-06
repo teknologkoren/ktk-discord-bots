@@ -29,6 +29,56 @@ VECKOMEJL_MESSAGES = [
     ),
 ]
 
+# A map from week number to a message meant to be sent that specific week
+VECKOMEJL_OVERRIDES = {
+    "44": """Plus quadraginta homines certiores facti sunt
+per recentem epistolam misit per digital modo
+usque ad mare Balticum septentrionem
+
+Litterae, quibus nomen "Veckomejl" impositum est,
+ad cantores choros in Stockholm magna cum significatione pervenit.""",
+    "45": """Så mörk är natten i midvintertid,
+men se: här är veckomejlet!
+Det kommer, det goda, som äro bäst.
+Det kommer med hälsning om gig och fest.
+Det kommer med info åt alla.""",
+    "46": """Titta vad som kommit nu
+Håll dig väl, mejlet mitt
+Veckans höjdpunkt, eller hur
+Allt för att vara up-to-date
+Julen har ej kommit än, kommit än
+Men vi sjunger om julen hela hösten lång""",
+    "47": """Veckomejlet kom till slut,
+kom till slut, kom till slut
+Det finns ju inget substitut
+Ira, ira, irallalerara
+Hejsan, låt oss lustiga vara
+En gång mejl i veckan bara,
+dullan dej, hej!""",
+    "48": """God mafton, mitt herrskap,
+här kommer veckomejl
+Det skänker er med viktig info
+
+Lucian nu påminner er att läsa
+detta mejl
+Om hon er i hälsan finner så
+kommer ni ha pejl
+
+God mafton, mitt herrskap,
+här kommer veckomejl
+Det skänker er med viktig info""",
+
+    "49": """Bered en väg för mejlet
+Var redo med din app
+Det mången gång har väglett
+Och tar dig snart ikapp
+
+Dess budskap äro sanna
+Så läs det, med detsamma
+Välsignat vare det
+Som skänker pålästhet""",
+}
+
 
 # Check if the found email is a veckomejl, and if so send a veckomejl notification.
 # Returns False if it wasn't a veckomejl, or True after sending the notification.
@@ -56,6 +106,7 @@ async def notify_if_veckomejl(bot, google_client, subject):
         # the week number in the filename, to avoid mixing up e.g. week 4 with week 40.
         match = NUMBER_PATTERN.search(file['name'])
         if match is None or match[0] != week_number:
+            print(file, "didn't match the week number")
             # This is not the document we're looking for.
             continue
 
@@ -71,8 +122,15 @@ async def notify_if_veckomejl(bot, google_client, subject):
     # Send the notification!
     guild = await bot.fetch_guild(DISCORD_GUILD_ID)
     channel = await guild.fetch_channel(DISCORD_VECKOMEJL_CHANNEL_ID)
+
+    message = random.choice(VECKOMEJL_MESSAGES)
+    if week_number in VECKOMEJL_OVERRIDES:
+        message = VECKOMEJL_OVERRIDES[week_number]
+    if view is None:
+        message = message + f"**{subject}**"
+
     await channel.send(
-        f"{random.choice(VECKOMEJL_MESSAGES)} **{subject}**",
+        f"{message}",
         view=view
     )
     return True
