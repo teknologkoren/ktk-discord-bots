@@ -4,37 +4,17 @@ This repository is home to KTK's two Discord bots: Streque and Körbot. Streque 
 
 
 ## Setting up a development environment
-Create a virtual environment:
+This project uses [uv](https://docs.astral.sh/uv/) to manage dependencies.
+Install uv, then create the virtual environment and install all dependencies
+(including the dev/test dependencies) with:
 
 ```sh
-python3 -m venv venv
+uv sync
 ```
 
-Activate the environment:
-
-```sh
-. venv/bin/activate
-```
-
-Now you may either use `pip` directly to install the dependencies, or
-you can install `pip-tools`. The latter is recommended.
-
-### pip
-
-```sh
-pip install -r requirements.txt
-```
-
-### pip-tools
-[pip-tools](https://github.com/jazzband/pip-tools) can keep your virtual
-environment in sync with the `requirements.txt` file, as well as compiling a
-new `requirements.txt` when adding/removing a dependency in `requirements.in`.
-
-```sh
-pip install pip-tools
-pip-compile  # only necessary when adding/removing a dependency
-pip-sync
-```
+Dependencies are declared in `pyproject.toml` and locked in `uv.lock`. To
+add/remove a dependency, edit `pyproject.toml` and run `uv sync` (or use
+`uv add`/`uv remove`), then commit the updated lockfile.
 
 ## Running the tests
 The unit tests live in `tests/`, one file per bot module. They do not need any
@@ -42,20 +22,10 @@ real configuration: `tests/conftest.py` installs a fake `instance.config` (and
 `instance.group_config`) before the bot modules are imported, and all Discord
 and HTTP interactions are mocked.
 
-Install the test dependencies on top of the runtime dependencies:
+Run the suite from the repo root:
 
 ```sh
-pip install -r requirements-dev.in
-```
-
-(Note: `requirements.txt` is a lockfile compiled for Python 3.10. On newer
-Python versions some of its pins fail to build; install the runtime
-dependencies from `requirements.in` instead in that case.)
-
-Then run the suite from the repo root:
-
-```sh
-pytest
+uv run pytest
 ```
 
 ## Configuration
@@ -91,4 +61,4 @@ The flasquelistan-managed roles will be assigned on join, as well as updated whe
 Other roles will need to be managed manually by Discord admins, but to make this a bit easier when many people join the server at the same time, there is a mechanism in the bot to do a one-time role assignment on join. In order to enable this, copy `group_config.py.template` to `instance/group_config.py` and populate it with role ids and member full names. The names need to exactly match the full names of the Streque users.
 
 ## Running the bots
-Simply run `python app.py run` with the repo root as working directory to start the bots. They will be online for as long as the script runs.
+Simply run `uv run app.py run` with the repo root as working directory to start the bots. They will be online for as long as the script runs.

@@ -3,3 +3,4 @@ discord.log
 group_config.py
 instance/
 venv/
+.venv/
