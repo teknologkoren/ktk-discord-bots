@@ -61,4 +61,20 @@ The flasquelistan-managed roles will be assigned on join, as well as updated whe
 Other roles will need to be managed manually by Discord admins, but to make this a bit easier when many people join the server at the same time, there is a mechanism in the bot to do a one-time role assignment on join. In order to enable this, copy `group_config.py.template` to `instance/group_config.py` and populate it with role ids and member full names. The names need to exactly match the full names of the Streque users.
 
 ## Running the bots
-Simply run `uv run app.py run` with the repo root as working directory to start the bots. They will be online for as long as the script runs.
+Simply run `uv run app.py` with the repo root as working directory to start the bots. They will be online for as long as the script runs.
+
+### Docker
+The bots can also be run the same way production does, in a Docker container:
+
+```sh
+docker compose up --build -d
+```
+
+The `instance/` directory is bind-mounted into the container, so the
+configuration described above is picked up as-is. See
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for details on the production setup.
+For day-to-day development, plain `uv run app.py` remains the quickest loop.
+
+## Documentation
+
+- [Deploying to production](docs/DEPLOYMENT.md) — Docker-based deployment

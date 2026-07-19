@@ -1,0 +1,27 @@
+# .dockerignore is independent of .gitignore.
+
+# VCS and tooling state
+.git
+.github
+.claude
+.gitignore
+.venv
+venv
+__pycache__
+**/__pycache__
+**/*.pyc
+.pytest_cache
+
+# Runtime state and secrets — provided via a bind mount, never baked into
+# the image
+instance
+discord.log
+
+# Not needed at runtime
+tests
+docs
+
+# Docker files themselves
+Dockerfile
+docker-compose*.yml
+.dockerignore
