@@ -36,6 +36,28 @@ pip-compile  # only necessary when adding/removing a dependency
 pip-sync
 ```
 
+## Running the tests
+The unit tests live in `tests/`, one file per bot module. They do not need any
+real configuration: `tests/conftest.py` installs a fake `instance.config` (and
+`instance.group_config`) before the bot modules are imported, and all Discord
+and HTTP interactions are mocked.
+
+Install the test dependencies on top of the runtime dependencies:
+
+```sh
+pip install -r requirements-dev.in
+```
+
+(Note: `requirements.txt` is a lockfile compiled for Python 3.10. On newer
+Python versions some of its pins fail to build; install the runtime
+dependencies from `requirements.in` instead in that case.)
+
+Then run the suite from the repo root:
+
+```sh
+pytest
+```
+
 ## Configuration
 All possible config variables are listed in `config.py.template`. Please make a copy of it to `instance/config.py` and fill out the values. Some of them are mandatory for the bots to run, while others are just needed for some of the functionality to be enabled.
 

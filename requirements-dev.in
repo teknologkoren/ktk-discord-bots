@@ -1,0 +1,21 @@
+# Development/test dependencies. Install on top of the runtime requirements:
+#
+#     pip install -r requirements-dev.in
+#
+# (Kept unpinned on purpose: pip-compiling these against the Python 3.10
+# lockfile in requirements.txt does not work on newer local Pythons, and the
+# test tools are not version sensitive.)
+
+# Test runner.
+pytest
+
+# Async test support (the bot code is asyncio based).
+pytest-asyncio
+
+# Mocking aiohttp requests in the client tests.
+aioresponses
+
+# aioresponses (as of 0.7.9) is incompatible with aiohttp >= 3.14. The prod
+# lockfile pins an older aiohttp anyway; this constraint only matters when
+# installing fresh from requirements.in.
+aiohttp<3.14
