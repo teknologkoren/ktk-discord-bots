@@ -1,0 +1,16 @@
+services:
+  bot:
+    build: .
+    volumes:
+      # All runtime state and secrets (config.py, group_config.py, songs.json,
+      # credentials.json, token.json) live in instance/ on the host. A bind
+      # mount rather than a named volume keeps them plain files: editable in
+      # place and backed up with a simple rsync. token.json is also written
+      # back on OAuth token refresh.
+      - ./instance:/app/instance
+    restart: unless-stopped
+    # The bots only make outbound connections (Discord, Streque, Google), so
+    # no ports are published.
+    # The image runs as UID 1000; if the mounted instance/ directory is owned
+    # by another user on the host, uncomment and adjust:
+    # user: "1000:1000"
