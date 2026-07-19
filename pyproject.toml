@@ -4,11 +4,9 @@ version = "0.1.0"
 description = "KTK's Discord bots: Streque and Körbot"
 requires-python = ">=3.10"
 dependencies = [
-    # Discord bot framework, fork of discord.py.
-    "py-cord",
-
-    # Needed to send audio to Discord.
-    "pynacl",
+    # Discord bot framework, fork of discord.py. The voice extra (pynacl,
+    # davey) is needed to send audio to Discord.
+    "py-cord[voice]",
 
     # For scheduling tasks to run periodically.
     "aiocron",
